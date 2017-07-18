@@ -364,14 +364,7 @@ func (g *grpcServer) processRequest(t transport.ServerTransport, stream *transpo
 				statusCode = err.code
 				statusDesc = err.desc
 			} else if err, ok := appErr.(*microErrors.Error); ok {
-				switch err.Code {
-				case 404:
-					statusCode = codes.NotFound
-				case 401:
-					statusCode = codes.Unauthenticated
-				default:
-					statusCode = codes.Internal
-				}
+				statusCode = convertHTTPCode(err.Code)
 				statusDesc = err.Detail
 			} else {
 				statusCode = convertCode(appErr)
